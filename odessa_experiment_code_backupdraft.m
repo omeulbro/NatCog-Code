@@ -240,7 +240,7 @@ function main()
 % by the participant's number 
 %This file will have all the information for each video clip as well 
 %Excludes event segmentation from the demo video
-fileID = fopen('pilot_data.txt', 'a');
+fileID = fopen('merged_event_data.txt', 'a');
 fprintf(fileID, 'Last trial is over. Next trial...\n');
 fprintf(fileID, '|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|\n');
 fprintf(fileID, 'Participant number: %d\n', counter); %Keeps track of which participant is going and what randomized list of stimuli they will watch
