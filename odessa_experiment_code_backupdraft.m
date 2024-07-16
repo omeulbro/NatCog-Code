@@ -11,7 +11,7 @@ function main()
     %randomization matrices that are in the generate_genres_matrices.m
     %file)
     %Code to segment each of the videos played using the space bar that is
-    %stored in a file called merged_even  ts.txt
+    %stored in a file called merged_events.txt
     %Code to record a free recall of all stimuli after all of the 6 videos
     %have been played
     %Code to record cued recall of all stimuli by presenting the title of
@@ -72,10 +72,10 @@ function main()
         instruction_text = ['Thank you for participating in this experiment!' ...
                             '\n                                                           ' ...
                             '\nIn this experiment, you will be segmenting video clips from different narratives into distinct events. ' ...
-                            '\nUpon watching all of the clips, you will be asked to recall your memory of each clip. ' ...
+                            '\nUpon watching all of the clips, you will be asked to recall the contents of each clip. ' ...
                             '\nFinally, you will be asked to complete a questionnaire assessing your watching habits and knowledge of different types of narratives.' ...
                             '\nPlease complete each task to the best of your ability.' ...
-                            '\nYou are welcome to take breaks in between tasks, but please limit these breaks to a few minutes.' ...
+                            '\nYou are welcome to take breaks in between tasks, but please limit these breaks to a couple of minutes.' ...
                             '\n                                                      ' ...
                             '\nPress space to start the experiment.'];
 
@@ -159,7 +159,7 @@ function main()
                        if pressed
                             if firstPress(space)
                                 currentTime = GetSecs; %get the current computer clock time
-                                if currentTime - lastEventTime > .05 %if the current time is more than 2 s away from the last time the space bar was pressed, count it as a distinct event
+                                if currentTime - lastEventTime > .5 %if the current time is more than 2 s away from the last time the space bar was pressed, count it as a distinct event
                                     demo_num_events = demo_num_events + 1; %increase the number of events
                                     event_length = currentTime - lastEventTime; %get the length of that specific event
                                     total_duration = secs - startTime; %get the duration of the stimulus so far
@@ -250,13 +250,13 @@ fprintf(fileID, 'Number of events from final demo run: %d\n', demo_num_events); 
 % Display instructions after the demo
 Screen('TextSize', win, 50);
 Screen('TextFont', win, 'Arial');
-experiment_instruction_text = ['You will now be shown 6 video clips from different movies and theatre productions. Each clip is around 7 minutes long.' ...
-    '\nBefore each clip, you will be presented with the title of the video and prompted to play it by pressing the space button. Please try and remember the titles of these videos.' ...
-    '\nWhile watching each video, please press the space button whenever you feel like one meaningful event has ended and another is starting; ' ...
+experiment_instruction_text = ['You will now be watching 6 video clips from different movies and theatre productions. Each clip will be around 7 minutes long.' ...
+    '\nBefore each clip, the title of the video will be presented. Please try and remember the titles of these videos..' ...
+    '\nFor each of the following videos, please press the space button whenever you feel like one meaningful event has ended and another is starting; ' ...
     'these will be points in the clip when there is a change in topic, location, or time. ' ...
     '\nThese events should be the most distinct units of action that seem natural and meaningful to you. ' ...
     '\nThere should be multiple events per clip, and each event should be between 10 seconds and 2 minutes long. ' ...
-    '\nYou are welcome to take breaks in between watching each stimulus, but please limit these breaks to a few minutes.' ...
+    '\nYou are welcome to take breaks after watching each video, but please limit these breaks to a couple of minutes.' ...
     '\n                                      ' ...
     '\nPress space to begin.'];
 DrawFormattedText(win, experiment_instruction_text, 'center', 'center', [255 255 255], 70);
@@ -276,21 +276,6 @@ finalgenreorder = finalgenres.finalgenresorder;
 finalbinary = load('binary_matrix'); % Matrix for 0/1 [binary]
 finalbinaryorder = finalbinary.binaryorder;
 
-% Define video names and genres
-names = {
-    '1', 'Edge of Tomorrow';
-    '2', 'Demolition Man';
-    '3', 'Secret  in Their Eyes';
-    '4', 'The Fugitive';
-    '5', 'Marry Me';
-    '6', 'The Proposal';
-    '7', 'Macbeth';
-    '8', 'Othello';
-    '9', 'Les Miserables';
-    '10', 'Phantom of the Opera';
-    '11', 'Almost, Maine';
-    '12', 'Our Town'
-};
 
 genres = {
     '1', 'SciFi';
@@ -335,7 +320,6 @@ if counter <= num_rows
     for k = 1:length(genre_values)
         genre_index = genre_values(k);
         binary_value = num2str(binary_values(k));
-        genre_name = genres{genre_index, 2};
 
         % Find the corresponding genre list
         genre_list = genres_list{genre_index};
@@ -450,14 +434,14 @@ for j = 1:length(selected_stimuli)
             [pressed, firstPress] = KbQueueCheck;
 
             if pressed
-                if firstPress(KbName('space'))
+                if firstPress(space)
                     %This loop tells us the length of the
                     %current event, the duration of the
                     %stimulus (using secs), and the frame the
                     %movie was on when the space button was
                     %pressed 
                     currentTime = GetSecs;
-                    if currentTime - lastEventTime > 2
+                    if currentTime - lastEventTime > .5
                          num_events = num_events + 1; %increase the number of events
                          event_length = currentTime - lastEventTime; %get the length of that specific event
                          total_duration = secs - startTime; %get the duration of the stimulus so far
@@ -479,11 +463,11 @@ for j = 1:length(selected_stimuli)
                     end
                 end
 
-                if firstPress(KbName('ESCAPE'))
+                if firstPress(esc)
                     break; % Skip to the next stimulus
                 end
 
-                if firstPress(KbName('f'))
+                if firstPress(f)
                     sca;
                     Screen('CloseAll');
                     break;
@@ -505,7 +489,6 @@ for j = 1:length(selected_stimuli)
        fprintf(fileID, '--------------------------------------------\n');
        
 
-        
         % Print out trials result if it was a valid trial
         if rejecttrial == 0
             fprintf('Trial %i valid.', i);
@@ -619,9 +602,9 @@ fclose(fileID);
     %record a 1-2 sentence summary of the plot
     Screen('TextSize', win, 50);
     Screen('TextFont', win, 'Arial');
-    cued_recall_text = ['You will now be shown the titles of the 6 movie and theatre clips you just watched. '...
+    cued_recall_text = ['You will now be shown the titles of the 6 movie and theatre clips you just watched one more time. '...
                         '\nFor each title shown, please provide a one to two-sentence summary of the plot.'  ...
-                        '\nIf you did not describe the plot of this clip already in your previous recording, please describe it in full now instead of summarizing.' ...
+                        '\nIf you did not describe the plot of this clip already in depth during the previous recording, please describe it in full now instead of summarizing it.' ...
                         '\nTo start the recording, please press the space button. ' ...
                         '\nWhen you are finished, please press the space button again.' ...
                         '\n                                                     ' ...
@@ -704,5 +687,3 @@ fclose(fileID);
     
     %All done!
     end 
-
-  
